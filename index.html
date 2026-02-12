@@ -3,183 +3,172 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Seyir Defteri — Berkay</title>
+  <title>Kaptan'ın Özel Arşivi</title>
   
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600&family=Crimson+Pro:ital,wght@1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,600;1,400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --bg: #f8f9fa; /* Pozitif, açık gri/beyaz bir arka plan */
-      --accent: #2e40a6; /* Güçlü bir mavi */
-      --text: #1a1a1a;
+      --bg: #0f1113;      /* Yazar sayfasındaki o derin siyah */
+      --accent: #d4a373;   /* Pas/Altın rengi vurgu */
+      --text: #e9e6df;
+      --frame-border: #1a1d20;
     }
 
     body, html {
       margin: 0; padding: 0;
       height: 100%; width: 100%;
       background: var(--bg);
+      color: var(--text);
       font-family: 'Inter', sans-serif;
-      overflow: hidden; /* Scroll yok, her şey odaklı */
+      overflow: hidden;
       display: flex; justify-content: center; align-items: center;
     }
 
-    /* GÜNEŞ IŞIĞI EFEKTİ (Mouse takibi) */
-    .sunlight {
+    /* FENER EFEKTİ (Spotlight) */
+    .spotlight {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
       pointer-events: none;
-      background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.8) 0%, rgba(248,249,250,0) 50%);
-      z-index: 10;
+      z-index: 100;
+      background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), transparent 10%, rgba(0,0,0,0.95) 35%);
     }
 
     .container {
       position: relative;
-      width: 90vw; height: 80vh;
-      max-width: 1000px;
-      text-align: center;
       z-index: 5;
+      width: 85vw; height: 75vh;
+      max-width: 900px;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
     }
 
-    /* RESİM ÇERÇEVESİ */
-    .photo-frame {
+    /* SERGİ ÇERÇEVESİ (Art Gallery Frame) */
+    .art-frame {
       position: relative;
-      width: 100%; height: 100%;
-      background: #fff;
-      padding: 15px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-      border-radius: 8px;
-      display: flex; justify-content: center; align-items: center;
+      padding: 40px; /* Dış paspartu */
+      background: #161a1d;
+      border: 15px solid var(--frame-border); /* Kalın çerçeve */
+      box-shadow: 
+        inset 0 0 20px rgba(0,0,0,0.8),
+        0 30px 60px rgba(0,0,0,0.7);
       transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+      display: flex; justify-content: center; align-items: center;
+      max-width: 100%; max-height: 100%;
     }
 
-    .photo-frame:hover {
-      transform: scale(1.02);
+    /* Çerçevenin altındaki altın künye (label) */
+    .art-frame::after {
+      content: "BERKAY ALAY • ARŞİV NO. 53";
+      position: absolute;
+      bottom: 8px;
+      font-family: 'Crimson Pro', serif;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--accent);
+      opacity: 0.6;
     }
 
     #current-photo {
       max-width: 100%;
-      max-height: 100%;
+      max-height: 60vh;
       object-fit: contain;
-      border-radius: 4px;
+      filter: sepia(0.2) contrast(1.1); /* Hafif eski fotoğraf havası */
       opacity: 0;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.8s ease;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
 
-    .photo-frame.visible #current-photo {
+    .art-frame.visible #current-photo {
       opacity: 1;
     }
 
-    /* KONTROLLER */
+    /* KONTROL BUTONU */
     .nav-box {
-      margin-top: 30px;
+      margin-top: 50px;
     }
 
-    .btn-next {
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      padding: 12px 30px;
-      border-radius: 50px;
-      font-weight: 600;
-      cursor: pointer;
-      letter-spacing: 1px;
-      transition: all 0.3s ease;
-      box-shadow: 0 10px 20px rgba(46, 64, 166, 0.2);
-    }
-
-    .btn-next:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 15px 25px rgba(46, 64, 166, 0.3);
-      filter: brightness(1.2);
-    }
-
-    /* BİLGİ METNİ */
-    .info-text {
-      position: absolute;
-      bottom: -60px;
-      width: 100%;
-      font-family: 'Crimson Pro', serif;
-      font-style: italic;
-      font-size: 1.2rem;
-      color: var(--text);
-      opacity: 0.7;
-    }
-
-    /* SAYAÇ */
-    .counter {
-      position: fixed;
-      top: 20px; right: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
+    .btn-fate {
+      background: transparent;
       color: var(--accent);
-      opacity: 0.5;
+      border: 1px solid rgba(212, 163, 115, 0.3);
+      padding: 12px 40px;
+      font-family: 'Crimson Pro', serif;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .btn-fate:hover {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(212, 163, 115, 0.2);
+    }
+
+    /* TOZ ZERRELERİ */
+    .dust-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: url('https://www.transparenttextures.com/patterns/stardust.png');
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 2;
     }
   </style>
 </head>
 <body>
 
-  <div class="sunlight"></div>
-  <div class="counter" id="counter">Kalan Anı: 10</div>
+  <div class="spotlight"></div>
+  <div class="dust-overlay"></div>
 
   <div class="container">
-    <div class="photo-frame" id="frame">
-      <img src="" id="current-photo" alt="Kaptan'ın Anısı">
+    <div class="art-frame" id="frame">
+      <img src="" id="current-photo" alt="Arşiv Kareleri">
     </div>
 
     <div class="nav-box">
-      <button class="btn-next" id="nextBtn">BAŞKA BİR AN'A GİT</button>
+      <button class="btn-fate" id="nextBtn">Bir Anı Çıkar</button>
     </div>
-
-    <div class="info-text" id="status-msg">Küçüklüğünden bugüne, tüm izler burada...</div>
   </div>
 
   <script>
-    // 1. FOTOĞRAF HAVUZU (1'den 10'a kadar)
-    let photoIndices = Array.from({length: 10}, (_, i) => i + 1);
-    let availablePhotos = [...photoIndices];
+    // 10 fotoğrafın index havuzu
+    let photos = Array.from({length: 10}, (_, i) => i + 1);
+    let pool = [...photos];
 
-    const imgElement = document.getElementById('current-photo');
+    const img = document.getElementById('current-photo');
     const frame = document.getElementById('frame');
-    const nextBtn = document.getElementById('nextBtn');
-    const counterDisplay = document.getElementById('counter');
-    const statusMsg = document.getElementById('status-msg');
+    const btn = document.getElementById('nextBtn');
 
-    // 2. RANDOM SEÇİM FONKSİYONU
-    function showRandomPhoto() {
-      if (availablePhotos.length === 0) {
-        statusMsg.textContent = "Tüm anıları dolaştın. Zaman tüneli başa sarıyor...";
-        availablePhotos = [...photoIndices]; // Havuzu yenile
-      }
+    function loadMemory() {
+      if (pool.length === 0) pool = [...photos]; // Havuz biterse yenile
 
-      frame.classList.remove('visible'); // Geçiş efekti
-
+      frame.classList.remove('visible'); // Karart
+      
       setTimeout(() => {
-        const randomIndex = Math.floor(Math.random() * availablePhotos.length);
-        const selectedId = availablePhotos.splice(randomIndex, 1)[0];
+        const randomIndex = Math.floor(Math.random() * pool.length);
+        const photoId = pool.splice(randomIndex, 1)[0];
         
-        imgElement.src = `./cover${selectedId}.jpg`;
-        counterDisplay.textContent = `Kalan Anı: ${availablePhotos.length}`;
+        img.src = `./cover${photoId}.jpg`;
         
-        imgElement.onload = () => {
-          frame.classList.add('visible');
+        img.onload = () => {
+          frame.classList.add('visible'); // Işığı aç
         };
-      }, 400);
+      }, 500);
     }
 
-    // 3. BAŞLANGIÇ
-    window.addEventListener('load', showRandomPhoto);
-    nextBtn.addEventListener('click', showRandomPhoto);
+    // Başlangıç ve Tıklama
+    window.addEventListener('load', loadMemory);
+    btn.addEventListener('click', loadMemory);
 
-    // 4. GÜNEŞ IŞIĞI (SPOTLIGHT'IN AYDINLIK HALİ)
+    // Fener Takibi
     document.addEventListener('mousemove', (e) => {
       document.body.style.setProperty('--x', e.clientX + 'px');
       document.body.style.setProperty('--y', e.clientY + 'px');
-    });
-
-    // 5. TUŞ KONTROLÜ (Space ile de geçer)
-    document.addEventListener('keydown', (e) => {
-      if(e.code === 'Space') showRandomPhoto();
     });
   </script>
 </body>
