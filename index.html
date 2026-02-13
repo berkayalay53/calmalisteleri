@@ -9,41 +9,40 @@
   
   <style>
     :root {
-      --bg: #0f1113;      /* Yazar sayfasındaki o derin siyah */
-      --accent: #d4a373;   /* Pas/Altın rengi vurgu */
+      --bg: #0f1113;      /* Derin Siyah */
+      --accent: #d4a373;   /* Pas/Altın Rengi */
       --text: #e9e6df;
       --frame-border: #1a1d20;
     }
 
-    body, html {
+    /* === 1. ARKA PLAN SABİTLEME (FLASH ÖNLEME) === */
+    html, body {
       margin: 0; padding: 0;
       height: 100%; width: 100%;
-      background: var(--bg);
+      background-color: var(--bg); /* Yüklenirken siyah kalsın */
       color: var(--text);
       font-family: 'Inter', sans-serif;
       overflow: hidden;
       display: flex; justify-content: center; align-items: center;
     }
 
-    /* FENER EFEKTİ (Spotlight) */
-/* FENER EFEKTİ (SABİT MÜZE IŞIĞI) */
+    /* === 2. SABİT MÜZE IŞIĞI (Hareket Yok) === */
     .spotlight {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
       pointer-events: none;
       z-index: 100;
-      
-      /* Işık tepeden (ortadan) vurur, aşağılar karanlıktır */
+      /* Işık tepeden (ortadan) vurur, köşeler karanlıktır */
       background: radial-gradient(
-        circle at 50% 10%,      /* Işık kaynağı: Üst orta */
-        transparent 10%,        /* Merkez aydınlık */
-        rgba(0, 0, 0, 0.5) 40%, /* Geçiş bölgesi */
-        rgba(15, 17, 19, 0.98) 90% /* Köşeler zifiri karanlık */
+        circle at 50% 30%,      /* Işık Kaynağı: Üst Orta */
+        transparent 15%,        /* Merkez Aydınlık */
+        rgba(0, 0, 0, 0.4) 45%, /* Geçiş */
+        rgba(15, 17, 19, 0.98) 95% /* Kenarlar Zifiri */
       );
-      
-      mix-blend-mode: multiply; /* Derinlik katar */
+      mix-blend-mode: multiply; /* Koyu atmosfer */
     }
+
     .container {
       position: relative;
       z-index: 5;
@@ -52,12 +51,12 @@
       display: flex; flex-direction: column; justify-content: center; align-items: center;
     }
 
-    /* SERGİ ÇERÇEVESİ (Art Gallery Frame) */
+    /* SERGİ ÇERÇEVESİ */
     .art-frame {
       position: relative;
-      padding: 40px; /* Dış paspartu */
+      padding: 40px; /* Paspartu */
       background: #161a1d;
-      border: 15px solid var(--frame-border); /* Kalın çerçeve */
+      border: 15px solid var(--frame-border);
       box-shadow: 
         inset 0 0 20px rgba(0,0,0,0.8),
         0 30px 60px rgba(0,0,0,0.7);
@@ -66,7 +65,7 @@
       max-width: 100%; max-height: 100%;
     }
 
-    /* Çerçevenin altındaki altın künye (label) */
+    /* Altın Künye */
     .art-frame::after {
       content: "BERKAY ALAY • ARŞİV NO. 53";
       position: absolute;
@@ -82,7 +81,7 @@
       max-width: 100%;
       max-height: 60vh;
       object-fit: contain;
-      filter: sepia(0.2) contrast(1.1); /* Hafif eski fotoğraf havası */
+      filter: sepia(0.2) contrast(1.1);
       opacity: 0;
       transition: opacity 0.8s ease;
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
@@ -145,7 +144,8 @@
   </div>
 
   <script>
-    // 10 fotoğrafın index havuzu
+    // === FOTOĞRAF HAVUZU (10 ADET) ===
+    // Resimlerin adı: cover1.jpg, cover2.jpg ... cover10.jpg olmalı
     let photos = Array.from({length: 10}, (_, i) => i + 1);
     let pool = [...photos];
 
@@ -154,26 +154,29 @@
     const btn = document.getElementById('nextBtn');
 
     function loadMemory() {
-      if (pool.length === 0) pool = [...photos]; // Havuz biterse yenile
+      // Havuz bittiyse yeniden doldur
+      if (pool.length === 0) pool = [...photos]; 
 
-      frame.classList.remove('visible'); // Karart
+      frame.classList.remove('visible'); // Önce karart
       
       setTimeout(() => {
         const randomIndex = Math.floor(Math.random() * pool.length);
         const photoId = pool.splice(randomIndex, 1)[0];
         
+        // Klasördeki "coverX.jpg" dosyasını çağırır
         img.src = `./cover${photoId}.jpg`;
         
         img.onload = () => {
-          frame.classList.add('visible'); // Işığı aç
+          frame.classList.add('visible'); // Işığı yak
         };
       }, 500);
     }
 
-    // Başlangıç ve Tıklama
+    // Başlangıçta ve Tıklayınca Çalıştır
     window.addEventListener('load', loadMemory);
     btn.addEventListener('click', loadMemory);
-    });
+    
+    // NOT: Hareketli fener kodu silindi. Işık artık sabit.
   </script>
 </body>
 </html>
