@@ -3,130 +3,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kaptan'ın Özel Arşivi</title>
+  <title>Kaptan'ın Seyir Defteri</title>
   
+  <meta name="theme-color" content="#0f1113">
+  <meta name="description" content="Sessizliğin içinden çekilmiş sahneler, unutulmuş anılar.">
+
+  <meta property="og:title" content="Kaptan'ın Seyir Defteri">
+  <meta property="og:description" content="Tozlu rafların arasından rastgele bir anı.">
+  <meta property="og:image" content="./cover6.jpg"> <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="./cover6.jpg" type="image/jpeg">
+
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,600;1,400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
   
-  <style>
-    :root {
-      --bg: #0f1113;      /* Derin Siyah */
-      --accent: #d4a373;   /* Pas/Altın Rengi */
-      --text: #e9e6df;
-      --frame-border: #1a1d20;
-    }
-
-    /* === 1. ARKA PLAN SABİTLEME (FLASH ÖNLEME) === */
-    html, body {
-      margin: 0; padding: 0;
-      height: 100%; width: 100%;
-      background-color: var(--bg); /* Yüklenirken siyah kalsın */
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
-      overflow: hidden;
-      display: flex; justify-content: center; align-items: center;
-    }
-
-    /* === 2. SABİT MÜZE IŞIĞI (Hareket Yok) === */
-    .spotlight {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-      z-index: 100;
-      /* Işık tepeden (ortadan) vurur, köşeler karanlıktır */
-      background: radial-gradient(
-        circle at 50% 30%,      /* Işık Kaynağı: Üst Orta */
-        transparent 15%,        /* Merkez Aydınlık */
-        rgba(0, 0, 0, 0.4) 45%, /* Geçiş */
-        rgba(15, 17, 19, 0.98) 95% /* Kenarlar Zifiri */
-      );
-      mix-blend-mode: multiply; /* Koyu atmosfer */
-    }
-
-    .container {
-      position: relative;
-      z-index: 5;
-      width: 85vw; height: 75vh;
-      max-width: 900px;
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-    }
-
-    /* SERGİ ÇERÇEVESİ */
-    .art-frame {
-      position: relative;
-      padding: 40px; /* Paspartu */
-      background: #161a1d;
-      border: 15px solid var(--frame-border);
-      box-shadow: 
-        inset 0 0 20px rgba(0,0,0,0.8),
-        0 30px 60px rgba(0,0,0,0.7);
-      transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-      display: flex; justify-content: center; align-items: center;
-      max-width: 100%; max-height: 100%;
-    }
-
-    /* Altın Künye */
-    .art-frame::after {
-      content: "BERKAY ALAY • ARŞİV NO. 53";
-      position: absolute;
-      bottom: 8px;
-      font-family: 'Crimson Pro', serif;
-      font-size: 10px;
-      letter-spacing: 2px;
-      color: var(--accent);
-      opacity: 0.6;
-    }
-
-    #current-photo {
-      max-width: 100%;
-      max-height: 60vh;
-      object-fit: contain;
-      filter: sepia(0.2) contrast(1.1);
-      opacity: 0;
-      transition: opacity 0.8s ease;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    }
-
-    .art-frame.visible #current-photo {
-      opacity: 1;
-    }
-
-    /* KONTROL BUTONU */
-    .nav-box {
-      margin-top: 50px;
-    }
-
-    .btn-fate {
-      background: transparent;
-      color: var(--accent);
-      border: 1px solid rgba(212, 163, 115, 0.3);
-      padding: 12px 40px;
-      font-family: 'Crimson Pro', serif;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.4s ease;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
-
-    .btn-fate:hover {
-      background: var(--accent);
-      color: var(--bg);
-      border-color: var(--accent);
-      box-shadow: 0 0 20px rgba(212, 163, 115, 0.2);
-    }
-
-    /* TOZ ZERRELERİ */
-    .dust-overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: url('https://www.transparenttextures.com/patterns/stardust.png');
-      opacity: 0.15;
-      pointer-events: none;
-      z-index: 2;
-    }
-  </style>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
@@ -134,49 +24,82 @@
   <div class="dust-overlay"></div>
 
   <div class="container">
+    
     <div class="art-frame" id="frame">
-      <img src="" id="current-photo" alt="Arşiv Kareleri">
+      <img src="" id="current-photo" alt="Arşivden bir kare">
+      <div class="frame-tag">ARŞİV NO. <span id="photo-id">--</span></div>
+    </div>
+
+    <div class="memory-note">
+      <p id="note-text">...</p>
+      <span id="note-source"></span>
     </div>
 
     <div class="nav-box">
       <button class="btn-fate" id="nextBtn">Bir Anı Çıkar</button>
     </div>
+
   </div>
 
   <script>
-    // === FOTOĞRAF HAVUZU (10 ADET) ===
-    // Resimlerin adı: cover1.jpg, cover2.jpg ... cover10.jpg olmalı
-    let photos = Array.from({length: 10}, (_, i) => i + 1);
-    let pool = [...photos];
+    // === 1. VERİ HAVUZU (Resimler ve Sözler) ===
+    // Buraya istediğin kadar ekleme yapabilirsin.
+    const memories = [
+      { id: 1, text: "Sana hiç dokunmadan, sadece uzaktan bir şarkı gibi sevdim seni.", source: "Turuncu Saçlı Kız" },
+      { id: 2, text: "Geriye dönsem de seni değil, sadece kendi yokluğumu bulacağımı biliyorum.", source: "Mazide Kalan" },
+      { id: 3, text: "Sarsılmadan duranlar... gürültüsüz çökenlerdir.", source: "Beynin Sessiz Fırtınaları" },
+      { id: 4, text: "Bazı insanlar konuşmaz. Ama gözleriyle bir ömürlük cümle kurarlar.", source: "Beynin Sessiz Fırtınaları" },
+      { id: 5, text: "İnsan, hayal ettiğini severmiş; gerçeği ise sadece tolere edermiş.", source: "Kayıp Duyular Atlası" },
+      { id: 6, text: "Kitap biter. Ama ses… devam eder.", source: "Kaybolan Sesin Defteri" },
+      { id: 7, text: "Biliyor musun, ben seni hiç ‘sahiplenmedim’. Çünkü sahip olduklarımı hep kaybettim.", source: "Geçmişteki Sessizlik" },
+      { id: 8, text: "Bazı insanlar birini özlemiyor — bir boşluğu seviyor.", source: "Kayıp Duyular Atlası" },
+      { id: 9, text: "Sanki konuşmaktan çok… anlatılmayan şeyleri dinliyorduk.", source: "Bir Defterin İçinde Kalanlar" },
+      { id: 10, text: "Fark etmemenin içinde öylesine bir adalet vardı ki... buna bile razı oldum.", source: "Turuncu Saçlı Kız" }
+    ];
 
+    // Değişkenler
     const img = document.getElementById('current-photo');
     const frame = document.getElementById('frame');
     const btn = document.getElementById('nextBtn');
+    const photoIdSpan = document.getElementById('photo-id');
+    const noteText = document.getElementById('note-text');
+    const noteSource = document.getElementById('note-source');
+    
+    let pool = [...memories]; // Karıştırma havuzu
 
+    // === 2. FONKSİYON: Rastgele Getir ===
     function loadMemory() {
       // Havuz bittiyse yeniden doldur
-      if (pool.length === 0) pool = [...photos]; 
+      if (pool.length === 0) pool = [...memories]; 
 
-      frame.classList.remove('visible'); // Önce karart
-      
+      // Efektler Başlasın
+      btn.classList.add('tiklandi'); // Buton pas rengi olsun
+      frame.classList.remove('visible'); // Resim kararsın
+      document.querySelector('.memory-note').style.opacity = '0'; // Yazı kaybolsun
+
       setTimeout(() => {
+        // Rastgele Seçim
         const randomIndex = Math.floor(Math.random() * pool.length);
-        const photoId = pool.splice(randomIndex, 1)[0];
+        const data = pool.splice(randomIndex, 1)[0];
         
-        // Klasördeki "coverX.jpg" dosyasını çağırır
-        img.src = `./cover${photoId}.jpg`;
+        // Verileri Yerleştir
+        img.src = `./cover${data.id}.jpg`; // Resim: cover1.jpg, cover2.jpg...
+        photoIdSpan.textContent = `00${data.id}`;
+        noteText.textContent = `“${data.text}”`;
+        noteSource.textContent = `— ${data.source}`;
         
+        // Resim Yüklenince Göster
         img.onload = () => {
-          frame.classList.add('visible'); // Işığı yak
+          frame.classList.add('visible');
+          document.querySelector('.memory-note').style.opacity = '1';
+          btn.classList.remove('tiklandi'); // Buton rengini geri al
         };
-      }, 500);
+      }, 500); // Yarım saniye bekle (Atmosfer için)
     }
 
-    // Başlangıçta ve Tıklayınca Çalıştır
+    // Başlangıçta çalıştır
     window.addEventListener('load', loadMemory);
     btn.addEventListener('click', loadMemory);
-    
-    // NOT: Hareketli fener kodu silindi. Işık artık sabit.
   </script>
 </body>
 </html>
