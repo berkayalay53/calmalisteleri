@@ -2,18 +2,11 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Kaptan'ın Seyir Defteri</title>
   
   <meta name="theme-color" content="#0f1113">
-  <meta name="description" content="Sessizliğin içinden çekilmiş sahneler, unutulmuş anılar.">
-
-  <meta property="og:title" content="Kaptan'ın Seyir Defteri">
-  <meta property="og:description" content="Tozlu rafların arasından rastgele bir anı.">
-  <meta property="og:image" content="./cover6.jpg"> <meta name="twitter:card" content="summary_large_image">
-
-  <link rel="icon" href="./cover6.jpg" type="image/jpeg">
-
+  
   <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,600;1,400&family=Inter:wght@300;400&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="./style.css">
@@ -23,27 +16,30 @@
   <div class="spotlight"></div>
   <div class="dust-overlay"></div>
 
-  <div class="container">
+  <div class="main-layout">
     
-    <div class="art-frame" id="frame">
-      <img src="" id="current-photo" alt="Arşivden bir kare">
-      <div class="frame-tag">ARŞİV NO. <span id="photo-id">--</span></div>
+    <div class="frame-area">
+      <div class="art-frame" id="frame">
+        <img src="" id="current-photo" alt="Arşivden bir kare">
+        <div class="frame-tag">ARŞİV NO. <span id="photo-id">--</span></div>
+      </div>
     </div>
 
-    <div class="memory-note">
-      <p id="note-text">...</p>
-      <span id="note-source"></span>
-    </div>
+    <div class="content-area">
+      <div class="memory-note">
+        <p id="note-text">...</p>
+        <span id="note-source"></span>
+      </div>
 
-    <div class="nav-box">
-      <button class="btn-fate" id="nextBtn">Bir Anı Çıkar</button>
+      <div class="nav-box">
+        <button class="btn-fate" id="nextBtn">Bir Anı Çıkar</button>
+      </div>
     </div>
 
   </div>
 
   <script>
-    // === 1. VERİ HAVUZU (Resimler ve Sözler) ===
-    // Buraya istediğin kadar ekleme yapabilirsin.
+    // === VERİLER ===
     const memories = [
       { id: 1, text: "Sana hiç dokunmadan, sadece uzaktan bir şarkı gibi sevdim seni.", source: "Turuncu Saçlı Kız" },
       { id: 2, text: "Geriye dönsem de seni değil, sadece kendi yokluğumu bulacağımı biliyorum.", source: "Mazide Kalan" },
@@ -57,7 +53,6 @@
       { id: 10, text: "Fark etmemenin içinde öylesine bir adalet vardı ki... buna bile razı oldum.", source: "Turuncu Saçlı Kız" }
     ];
 
-    // Değişkenler
     const img = document.getElementById('current-photo');
     const frame = document.getElementById('frame');
     const btn = document.getElementById('nextBtn');
@@ -65,39 +60,32 @@
     const noteText = document.getElementById('note-text');
     const noteSource = document.getElementById('note-source');
     
-    let pool = [...memories]; // Karıştırma havuzu
+    let pool = [...memories];
 
-    // === 2. FONKSİYON: Rastgele Getir ===
     function loadMemory() {
-      // Havuz bittiyse yeniden doldur
       if (pool.length === 0) pool = [...memories]; 
 
-      // Efektler Başlasın
-      btn.classList.add('tiklandi'); // Buton pas rengi olsun
-      frame.classList.remove('visible'); // Resim kararsın
-      document.querySelector('.memory-note').style.opacity = '0'; // Yazı kaybolsun
+      btn.classList.add('tiklandi');
+      frame.classList.remove('visible'); 
+      document.querySelector('.memory-note').style.opacity = '0'; 
 
       setTimeout(() => {
-        // Rastgele Seçim
         const randomIndex = Math.floor(Math.random() * pool.length);
         const data = pool.splice(randomIndex, 1)[0];
         
-        // Verileri Yerleştir
-        img.src = `./cover${data.id}.jpg`; // Resim: cover1.jpg, cover2.jpg...
+        img.src = `./cover${data.id}.jpg`;
         photoIdSpan.textContent = `00${data.id}`;
         noteText.textContent = `“${data.text}”`;
         noteSource.textContent = `— ${data.source}`;
         
-        // Resim Yüklenince Göster
         img.onload = () => {
           frame.classList.add('visible');
           document.querySelector('.memory-note').style.opacity = '1';
-          btn.classList.remove('tiklandi'); // Buton rengini geri al
+          btn.classList.remove('tiklandi');
         };
-      }, 500); // Yarım saniye bekle (Atmosfer için)
+      }, 500);
     }
 
-    // Başlangıçta çalıştır
     window.addEventListener('load', loadMemory);
     btn.addEventListener('click', loadMemory);
   </script>
